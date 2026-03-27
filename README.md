@@ -1,35 +1,62 @@
-# OpenSearch Observability Stack
+# OpenSearch Observability Stack v2
 
-Portfolio-grade observability platform demonstrating log ingestion, centralised search, dashboards, and alerting using OpenSearch. This repository is designed to showcase practical experience operating OpenSearch for high-throughput application and infrastructure telemetry.
+Portfolio-grade observability stack demonstrating **centralised logging, index templating, alerting concepts, dashboards, and synthetic traffic generation** using OpenSearch. This version is designed to communicate practical engineering judgment rather than just “Docker Compose works”.
 
-## Objectives
+## What this project shows
 
-- Centralise logs from application and infrastructure sources
-- Provide searchable operational visibility
-- Support basic incident response and troubleshooting workflows
-- Demonstrate scalable structure that can be extended for higher-volume ingestion
+- Structured JSON logging
+- Centralised search and troubleshooting
+- Index template management
+- Synthetic load generation
+- Operational dashboard concepts
+- Alerting examples
+- Basic retention and architecture thinking
 
-## Stack
+## Architecture
 
-- OpenSearch
-- OpenSearch Dashboards
-- Fluent Bit
-- Sample application log generator
-- Docker Compose for local development
+```mermaid
+flowchart LR
+    App[Log Generator / Demo App] --> FB[Fluent Bit]
+    FB --> OS[(OpenSearch)]
+    OS --> Dash[OpenSearch Dashboards]
+    OS --> Alerts[Alerting Rules]
+
+    Analyst[Engineer / SRE] --> Dash
+    Analyst --> OS
+```
+
+## Why this matters
+
+In real environments, observability is not just dashboards. It is how teams:
+
+- detect regressions
+- correlate incidents
+- investigate failures
+- understand throughput and latency trends
+- support security and operational workflows
+
+This repo is inspired by production-style patterns, including high-ingestion thinking and schema awareness.
 
 ## Repository structure
 
 ```text
 .
+├── alerts/
+│   └── sample-alerts.md
 ├── dashboards/
-│   └── sample-dashboard.ndjson
+│   └── recruiter-demo-dashboard.md
 ├── docker-compose.yml
 ├── fluent-bit/
-│   └── fluent-bit.conf
+│   ├── fluent-bit.conf
+│   └── parsers.conf
 ├── generators/
-│   └── app_log_generator.py
-└── opensearch/
-    └── index-template.json
+│   ├── app_log_generator.py
+│   └── replay_burst.py
+├── opensearch/
+│   ├── bootstrap-index-template.sh
+│   └── index-template.json
+└── screenshots/
+    └── README.md
 ```
 
 ## Quick start
@@ -39,35 +66,63 @@ docker compose up -d
 python3 generators/app_log_generator.py
 ```
 
-Then open OpenSearch Dashboards on the configured local port.
+Optional burst simulation:
 
-## What this demonstrates
+```bash
+python3 generators/replay_burst.py --events 5000
+```
 
-- Centralised logging patterns
-- Basic schema management via index templates
-- Structured JSON logging
-- Search and visualisation workflows
-- Foundation for alerting, anomaly detection, and performance troubleshooting
+Bootstrap the index template:
+
+```bash
+bash opensearch/bootstrap-index-template.sh
+```
+
+## Example operational scenarios
+
+- Rising 5xx errors in the `api` service
+- Elevated latency for one service tier
+- Throughput spike triggering indexing pressure
+- Search by `request_id` to trace individual events
+
+## Suggested recruiter demo flow
+
+1. Start the stack
+2. Generate logs for a few minutes
+3. Trigger a burst workload
+4. Show dashboards or screenshots
+5. Walk through how you would detect and triage an incident
 
 ## Production-minded considerations
 
-For a production deployment, the next steps would be:
+### Scale and retention
+At higher ingestion rates, design choices start to matter:
 
-- TLS and authentication hardening
-- Multi-node cluster design
-- Index State Management policies
-- Snapshot strategy
-- Data retention controls
-- Dedicated ingest tiers where appropriate
-- Alerting integration with chat or incident tooling
+- shard counts
+- rollover strategy
+- retention windows
+- tiered storage
+- replica policies
+- query patterns
 
-## Suggested enhancements
+### Security
+A production deployment should add:
 
-- Add security analytics dashboards
-- Add synthetic traffic generator
-- Add ingestion rate and latency alerting
-- Add infrastructure metrics alongside logs
+- TLS
+- authentication and authorisation
+- hardened cluster settings
+- network isolation
+- snapshot strategy
 
-## Disclaimer
+## Suggested v3 enhancements
 
-This repository is designed for learning and demonstration purposes and should be hardened before production use.
+- multi-node cluster variant
+- ISM / rollover policies
+- Prometheus exporter integration
+- alert webhooks
+- threat-detection style dashboards
+- synthetic application container with richer error modes
+
+## Notes
+
+This repo is intentionally portfolio-focused: clean enough for demonstration, realistic enough to signal operational depth.

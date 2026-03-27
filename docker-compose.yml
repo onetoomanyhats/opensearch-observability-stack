@@ -24,6 +24,7 @@ services:
     image: fluent/fluent-bit:2.2
     volumes:
       - ./fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
+      - ./fluent-bit/parsers.conf:/fluent-bit/etc/parsers.conf:ro
       - ./logs:/logs
     depends_on:
       - opensearch

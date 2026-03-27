@@ -3,16 +3,21 @@
   "template": {
     "settings": {
       "number_of_shards": 1,
-      "number_of_replicas": 0
+      "number_of_replicas": 0,
+      "refresh_interval": "5s"
     },
     "mappings": {
       "properties": {
         "@timestamp": { "type": "date" },
-        "level": { "type": "keyword" },
         "service": { "type": "keyword" },
+        "level": { "type": "keyword" },
+        "status_code": { "type": "integer" },
         "latency_ms": { "type": "integer" },
+        "request_id": { "type": "keyword" },
         "message": { "type": "text" },
-        "request_id": { "type": "keyword" }
+        "host": { "type": "keyword" },
+        "environment": { "type": "keyword" },
+        "platform": { "type": "keyword" }
       }
     }
   }
