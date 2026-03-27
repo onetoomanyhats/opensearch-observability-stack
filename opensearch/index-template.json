@@ -1,0 +1,19 @@
+{
+  "index_patterns": ["app-logs*"],
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0
+    },
+    "mappings": {
+      "properties": {
+        "@timestamp": { "type": "date" },
+        "level": { "type": "keyword" },
+        "service": { "type": "keyword" },
+        "latency_ms": { "type": "integer" },
+        "message": { "type": "text" },
+        "request_id": { "type": "keyword" }
+      }
+    }
+  }
+}
